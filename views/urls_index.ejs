@@ -3,7 +3,7 @@
 <%- include partials/_header %>
 <body>
   <h1>TinyApp!</h1>
-  <% for (let vars in urls) { %>
+  <% for (const vars in urls) { %>
       <li><%= vars %></li>
     <% } %>
     <!--- shorten url empty link --->

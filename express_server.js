@@ -1,3 +1,5 @@
+"use strict";
+
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
@@ -7,18 +9,19 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 
 function generateRandomString() {
-  var newShortURL = "";
-  var possibleValues = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let newShortURL = "";
+  let possibleValues = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWxXxYyZz0123456789";
 
-  for (var i = 0; i < 6; i++) {
+  for (let i = 0; i < 6; i++) {
     newShortURL += possibleValues.charAt(Math.floor(Math.random() * possibleValues.length));
   }
   return newShortURL;
 }
 
-var urlDatabase = {
+let urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "9sm5xK": "http://www.google.com",
+  "J24601": "http://www.twitter.com"
 };
 
 app.get("/urls", (request, response) => {
@@ -33,14 +36,20 @@ app.get("/urls/new", (request, response) => {
 });
 
 app.post("/urls", (request, response) => {
-  console.log(request.body);
-  response.send("Ok");
+  let shortURL = generateRandomString();
+  urlDatabase[shortURL] = request.body.longURL;
+  response.redirect(`http://localhost:8080/urls/${shortURL}`);
+});
+
+app.get("/u/:shortURL", (request, response) => {
+  let longURL = urlDatabase[request.params.shortURL];
+  response.redirect(longURL);
 });
 
 app.get("/urls/:id", (request, response) => {
   let templateVars = {
     shortURL: request.params.id,
-    keyURL: urlDatabase[request.params.id]
+    longURL: urlDatabase[request.params.id]
   };
   response.render("urls_show", templateVars);
 });
@@ -49,13 +58,13 @@ app.get("/urls.json", (request, response) => {
   response.json(urlDatabase);
 });
 
-app.get("/hello", (request, response) => {
-  response.end("<html><body>Hello <b>World</b></body></html>\n")
-});
+// app.get("/", (req, res) => {
+//   res.end("Hello!");
+// });
 
-app.get("/", (req, res) => {
-  res.end("Hello!");
-});
+// app.get("/hello", (request, response) => {
+//   response.end("<html><body>Hello <b>World</b></body></html>\n");
+// });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
