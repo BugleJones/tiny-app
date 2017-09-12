@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html land="en">
-<head>
-  <title>TinyApp</title>
-</head>
+<%- include partials/_header %>
 <body>
-  <h1>TinyApp</h1>
-  <
-    <!--- EJS CODE HERE -->
+  <h1>TinyApp!</h1>
+  <% for (let vars in urls) { %>
+      <li><%= vars %></li>
+    <% } %>
+    <!--- shorten url empty link --->
+  <a>Insert link to be shortened</a>
 </body>
 </html>

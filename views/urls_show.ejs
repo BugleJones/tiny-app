@@ -1,4 +1,8 @@
-app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id };
-  res.render("urls_show", templateVars);
-});
+<!DOCTYPE html>
+<html land="en">
+<%- include partials/_header %>
+<body>
+  <h1>TinyApp!</h1>
+  <h3>URL = <%= keyURL %> TinyURL <%= `http://localhost:8080/urls/${shortURL}` %></h3>
+</body>
+</html>
