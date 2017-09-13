@@ -3,10 +3,12 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const PORT = process.env.PORT || 8080; // default port 8080
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookie-parser());
 
 function generateRandomString() {
   let newShortURL = "";
@@ -81,8 +83,6 @@ app.post("/urls/:id/delete", (request, response) => {
   //Redirect
   response.redirect("/urls");
 });
-
-console.log(urlDatabase);
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
