@@ -44,7 +44,7 @@ app.get("/urls/new", (request, response) => {
 });
 
 app.post("/login", (request, response) => {
-  response.cookie("username");
+  response.cookie("username", request.body.username);
   response.redirect("/urls");
 });
 
