@@ -42,29 +42,37 @@ app.post("/urls", (request, response) => {
 });
 
 app.get("/u/:shortURL", (request, response) => {
-  let longURL = urlDatabase[request.params.shortURL];
-  response.redirect(longURL);
+  if (urlDatabase[request.params.shortURL] === undefined) {
+    response.redirect(404, "/urls/new");
+  } else {
+    let longURL = urlDatabase[request.params.shortURL];
+    response.redirect(longURL);
+}
 });
 
 app.get("/urls/:id", (request, response) => {
+  if (urlDatabase[request.params.id] === undefined) {
+    response.redirect(404, "/urls/new");
+  } else {
   let templateVars = {
     shortURL: request.params.id,
     longURL: urlDatabase[request.params.id]
-  };
+    };
   response.render("urls_show", templateVars);
+  }
 });
 
 app.get("/urls.json", (request, response) => {
   response.json(urlDatabase);
 });
 
-app.get("/", (req, res) => {
-  res.end("Hello!");
-});
-
-app.get("/hello", (request, response) => {
-  response.end("<html><body>Hello <b>World</b></body></html>\n");
-});
+// app.get("/", (req, res) => {
+//   res.end("Hello!");
+// });
+//
+// app.get("/hello", (request, response) => {
+//   response.end("<html><body>Hello <b>World</b></body></html>\n");
+// });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
