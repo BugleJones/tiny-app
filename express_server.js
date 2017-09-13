@@ -10,6 +10,8 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser() );
 
+// app.get("/views", require("views/mymiddleware.js"));
+
 function generateRandomString() {
   let newShortURL = "";
   let possibleValues = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWxXxYyZz0123456789";
@@ -28,7 +30,8 @@ let urlDatabase = {
 
 app.get("/urls", (request, response) => {
   let templateVars = {
-    urls: urlDatabase
+    urls: urlDatabase,
+    username: request.cookies.username
   };
   response.render("urls_index", templateVars);
 });
@@ -40,7 +43,10 @@ app.post("/urls", (request, response) => {
 });
 
 app.get("/urls/new", (request, response) => {
-  response.render("urls_new");
+  let templateVars = {
+    username: request.cookies.username
+  };
+  response.render("urls_new", templateVars);
 });
 
 app.post("/login", (request, response) => {
@@ -74,7 +80,8 @@ app.get("/urls/:id", (request, response) => {
   } else {
   let templateVars = {
     shortURL: request.params.id,
-    longURL: urlDatabase[request.params.id]
+    longURL: urlDatabase[request.params.id],
+    username: request.cookies.username
     };
   response.render("urls_show", templateVars);
   }
