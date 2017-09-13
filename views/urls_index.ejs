@@ -1,12 +1,21 @@
 <!DOCTYPE html>
+
+<!---/urls/ page--->
+
 <html land="en">
 <%- include partials/_header %>
 <body>
   <h1>TinyApp!</h1>
+  <h3>Your TinyURLs:</h3>
   <% for (const vars in urls) { %>
-      <li><%= vars %></li>
+      <span style="display: inline;">
+        <li> Origin: <%= urls[vars] %> TinyURL: <%= `http://localhost:8080/u/${vars}` %>
+            <form method="POST" action="/urls/<%= vars %>/delete">
+              <button type="submit"</button>DELETE
+            </form>
+        </li>
+      </span>
     <% } %>
     <!--- shorten url empty link --->
-  <a>Insert link to be shortened</a>
 </body>
 </html>

@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 8080; // default port 8080
 
 app.set("view engine", "ejs");
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 function generateRandomString() {
   let newShortURL = "";
@@ -31,15 +31,16 @@ app.get("/urls", (request, response) => {
   response.render("urls_index", templateVars);
 });
 
-app.get("/urls/new", (request, response) => {
-  response.render("urls_new");
-});
-
 app.post("/urls", (request, response) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = request.body.longURL;
   response.redirect(`/urls/${shortURL}`);
 });
+
+app.get("/urls/new", (request, response) => {
+  response.render("urls_new");
+});
+
 
 app.get("/u/:shortURL", (request, response) => {
   if (urlDatabase[request.params.shortURL] === undefined) {
@@ -62,9 +63,34 @@ app.get("/urls/:id", (request, response) => {
   }
 });
 
-app.get("/urls.json", (request, response) => {
-  response.json(urlDatabase);
+app.post("urls/:id", (request, response) => {
+  let newLongUrl = request.body.longURL;
+  let currentURL = request.params.id;
+
+  urlDatabase[currentURL] = newLongUrl;
+
+  response.redirect("/urls");
 });
+
+
+app.post("/urls/:id/delete", (request, response) => {
+  //Find the urls
+  let currentKey = request.params.id;
+  // Remove it
+  delete urlDatabase[currentKey];
+  //Redirect
+  response.redirect("/urls");
+});
+
+console.log(urlDatabase);
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
+
+// app.get("/urls.json", (request, response) => {
+//   response.json(urlDatabase);
+// });
 
 // app.get("/", (req, res) => {
 //   res.end("Hello!");
@@ -73,7 +99,3 @@ app.get("/urls.json", (request, response) => {
 // app.get("/hello", (request, response) => {
 //   response.end("<html><body>Hello <b>World</b></body></html>\n");
 // });
-
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});

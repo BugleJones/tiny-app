@@ -1,8 +1,18 @@
 <!DOCTYPE html>
+
+<!---/u/[shortURL] page--->
+
 <html land="en">
 <%- include partials/_header %>
-<body>
-  <h1>TinyApp!</h1>
-  <h3>URL: <%= longURL %> TinyURL: <%= `http://localhost:8080/u/${shortURL}` %></h3>
-</body>
+  <body>
+    <h1>TinyApp!</h1>
+    <h3>URL: <%= longURL %> TinyURL: <%= `http://localhost:8080/urls/${shortURL}` %></h3>
+    <form method="POST" action="/urls/<%= shortURL %>/">
+      <p>
+        <label for="newLongUrl">New URL:</label>
+        <input id="longURL" type="text" name="longURL" value=<%= longURL %>>
+      </p>
+      <button type="submit"</button>Update
+    </form>
+  </body>
 </html>
