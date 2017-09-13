@@ -10,9 +10,10 @@
   <% for (const vars in urls) { %>
       <span style="display: inline;">
         <li> Origin: <%= urls[vars] %> TinyURL: <%= `http://localhost:8080/u/${vars}` %>
-            <form method="POST" action="/urls/<%= vars %>/delete">
-              <button type="submit"</button>DELETE
-            </form>
+          <a href="/urls/<%= vars %>">Edit</a>
+          <form method="POST" action="/urls/<%= vars %>/delete">
+            <button type="submit"</button>Delete
+          </form>
         </li>
       </span>
     <% } %>
