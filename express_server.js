@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 8080; // default port 8080
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookie-parser());
+app.use(cookieParser() );
 
 function generateRandomString() {
   let newShortURL = "";
@@ -41,6 +41,11 @@ app.post("/urls", (request, response) => {
 
 app.get("/urls/new", (request, response) => {
   response.render("urls_new");
+});
+
+app.post("/login", (request, response) => {
+  response.cookie("username");
+  response.redirect("/urls");
 });
 
 
