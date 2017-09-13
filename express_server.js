@@ -51,6 +51,16 @@ app.get("/u/:shortURL", (request, response) => {
 }
 });
 
+app.post("/urls/:id", (request, response) => {
+  let newLongUrl = request.body.longURL;
+  let currentURL = request.params.id;
+
+  urlDatabase[currentURL] = newLongUrl;
+
+  response.redirect("/urls");
+});
+
+
 app.get("/urls/:id", (request, response) => {
   if (urlDatabase[request.params.id] === undefined) {
     response.redirect(404, "/urls/new");
@@ -62,16 +72,6 @@ app.get("/urls/:id", (request, response) => {
   response.render("urls_show", templateVars);
   }
 });
-
-app.post("urls/:id", (request, response) => {
-  let newLongUrl = request.body.longURL;
-  let currentURL = request.params.id;
-
-  urlDatabase[currentURL] = newLongUrl;
-
-  response.redirect("/urls");
-});
-
 
 app.post("/urls/:id/delete", (request, response) => {
   //Find the urls

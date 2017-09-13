@@ -7,12 +7,12 @@
   <body>
     <h1>TinyApp!</h1>
     <h3>URL: <%= longURL %> TinyURL: <%= `http://localhost:8080/urls/${shortURL}` %></h3>
-    <form method="POST" action="/urls/<%= shortURL %>/">
+    <form method="POST" action="/urls/<%= shortURL %>">
       <p>
         <label for="newLongUrl">New URL:</label>
         <input id="longURL" type="text" name="longURL" value=<%= longURL %>>
       </p>
-      <button type="submit"</button>Update
+      <button type="submit">Update</button>
     </form>
   </body>
 </html>
