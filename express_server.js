@@ -38,7 +38,7 @@ app.get("/urls/new", (request, response) => {
 app.post("/urls", (request, response) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = request.body.longURL;
-  response.redirect(`http://localhost:8080/urls/${shortURL}`);
+  response.redirect(`/urls/${shortURL}`);
 });
 
 app.get("/u/:shortURL", (request, response) => {
@@ -58,13 +58,13 @@ app.get("/urls.json", (request, response) => {
   response.json(urlDatabase);
 });
 
-// app.get("/", (req, res) => {
-//   res.end("Hello!");
-// });
+app.get("/", (req, res) => {
+  res.end("Hello!");
+});
 
-// app.get("/hello", (request, response) => {
-//   response.end("<html><body>Hello <b>World</b></body></html>\n");
-// });
+app.get("/hello", (request, response) => {
+  response.end("<html><body>Hello <b>World</b></body></html>\n");
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
