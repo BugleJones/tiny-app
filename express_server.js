@@ -38,7 +38,7 @@ app.get("/urls/new", (request, response) => {
 app.post("/urls", (request, response) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = request.body.longURL;
-  response.redirect(301, `/urls/${shortURL}`);
+  response.redirect(`/urls/${shortURL}`);
 });
 
 app.get("/u/:shortURL", (request, response) => {
@@ -46,7 +46,7 @@ app.get("/u/:shortURL", (request, response) => {
     response.redirect(404, "/urls/new");
   } else {
     let longURL = urlDatabase[request.params.shortURL];
-    response.redirect(301, longURL);
+    response.redirect(longURL);
 }
 });
 
