@@ -36,9 +36,7 @@ const users = {
 app.use((request, response, next) => {
   response.locals = {
     urls: urlDatabase,
-    shortURL: request.params.id,
-    longURL: urlDatabase[request.params.id],
-    user: users[request.cookies.users_id]
+    user: users[request.cookies.user_id]
   };
   next();
 });
@@ -55,12 +53,10 @@ function generateRandomString() {
   return newShortURL;
 }
 
-function findUserByEmail(userEmail, user) {
+function findUserByEmail(userEmail) {
   for (let user in users) {
     if (users[user].email === userEmail) {
       return users[user];
-    } else {
-      return;
     }
   }
 }
@@ -68,11 +64,11 @@ function findUserByEmail(userEmail, user) {
 //////////(URLS MAIN PAGE)//////
 
 app.get("/urls", (request, response) => {
-  let templateVars = {
-    urls: urlDatabase,
-    user: request.cookies.users_id
-  };
-  response.render("urls_index", templateVars);
+  // let templateVars = {
+  //   urls: urlDatabase,
+  //   user: request.cookies.users_id
+  // };
+  response.render("urls_index");
 });
 
 app.post("/urls", (request, response) => {
@@ -139,11 +135,11 @@ app.get("/login", (request, response) => {
 app.post("/login", (request, response) => {
   let user = findUserByEmail(request.body.email);
   if (!user || request.body.password !== user.password) {
-  response.status(403);
-  response.render("login", { error: "Not found" });
+    response.status(403);
+    response.render("login", { error: "Not found" });
   }
-  response.cookie("user_id", user.id);
-  response.redirect("/urls");
+    response.cookie("user_id", user.id);
+    response.redirect("/urls");
 });
 
 //////////(LOGOUT OPTION)////////
@@ -171,7 +167,7 @@ app.get("/urls/:id", (request, response) => {
     response.status(404);
     response.send("404 Error");
   }
-  response.render("urls_show");
+  response.render("urls_show", { shortURL, longURL });
 });
 
 app.get("/u/:shortURL", (request, response) => {
