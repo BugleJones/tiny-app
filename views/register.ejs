@@ -1,0 +1,16 @@
+<html lang="en">
+<%- include partials/_header %>
+<body>
+    <h3>Create Your TinyApp Account</h3>
+    <form action="/register" method="POST">
+      <p>
+        <label for="tinyapp-email">Email</label>
+        <input type="email" name="email">
+      </p>
+      <p>
+        <label for="tinyapp-password">Password</label>
+        <input type="password" name="password">
+      </p>
+    </form>
+</body>
+</html>

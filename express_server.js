@@ -28,6 +28,19 @@ let urlDatabase = {
   "J24601": "http://www.twitter.com"
 };
 
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+};
+
 app.get("/urls", (request, response) => {
   let templateVars = {
     urls: urlDatabase,
@@ -49,6 +62,20 @@ app.get("/urls/new", (request, response) => {
   response.render("urls_new", templateVars);
 });
 
+app.get("/register", (request, response) => {
+  let templateVars = {
+    username: request.cookies.username
+  };
+  response.render("register", templateVars);
+});
+
+app.post("/register", (request, response) => {
+  let randomUserId = generateRandomString();
+  let userPassword = request.body.password;
+  users[randomUserId] = request.body.id;
+  response.redirect("/urls");
+}
+
 app.post("/login", (request, response) => {
   response.cookie("username", request.body.username);
   response.redirect("/urls");
@@ -56,14 +83,8 @@ app.post("/login", (request, response) => {
 
 app.post("/logout", (request, response) => {
   response.clearCookie("username");
-  response.redirect("/urls");
+  response.redirect("/register");
 });
-
-app.post("/login", (request, response) => {
-  response.cookie("username");
-  response.redirect("/urls");
-});
-
 
 app.get("/u/:shortURL", (request, response) => {
   if (urlDatabase[request.params.shortURL] === undefined) {
@@ -98,11 +119,8 @@ app.get("/urls/:id", (request, response) => {
 });
 
 app.post("/urls/:id/delete", (request, response) => {
-  //Find the urls
   let currentKey = request.params.id;
-  // Remove it
   delete urlDatabase[currentKey];
-  //Redirect
   response.redirect("/urls");
 });
 
