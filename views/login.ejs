@@ -1,14 +1,22 @@
 <html lang="en">
 <%- include partials/_header %>
+<style>
+  .error{
+    color: tomato;
+  }
+</style>
 <body>
   <h3>Sign Into Your TinyApp Account</h3>
+  <% if (locals.error){ %>
+  <p class='error'><%= error %></p>
+  <% } %>
     <form method="POST" class="" action="/login">
       <p>
         <label for="tinyapp-loginEmail">Email:</label>
         <input type="email" name="email" placeholder="example@example.com">
       </p>
       <p>
-        <label for="tinyapp-password">Password</label>
+        <label for="tinyapp-password">Password:</label>
         <input type="password" name="password">
       </p>
       <button type="submit">Login</button>

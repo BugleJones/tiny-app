@@ -22,7 +22,7 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: "dinosaur"
   },
   "user2RandomID": {
     id: "user2RandomID",
@@ -38,7 +38,7 @@ app.use((request, response, next) => {
     urls: urlDatabase,
     shortURL: request.params.id,
     longURL: urlDatabase[request.params.id],
-    user: findUserByEmail(request.cookies.users_id)
+    user: users[request.cookies.users_id]
   };
   next();
 });
@@ -70,17 +70,11 @@ app.post("/urls", (request, response) => {
 });
 
 app.get("/urls/new", (request, response) => {
-  let templateVars = {
-    user: request.cookies.users_id
-  };
-  response.render("urls_new", templateVars);
+  response.render("urls_new");
 });
 
 app.get("/register", (request, response) => {
-  let templateVars = {
-    user: request.cookies.users_id
-  };
-  response.render("register", templateVars);
+  response.render("register");
 });
 
 function findUserByEmail(userEmail, user) {
@@ -130,14 +124,16 @@ app.post("/register", (request, response) => {
 });
 
 app.get("/login", (request, response) => {
-  let templateVars = {
-    user: request.cookies.users_id
-  };
   response.render("login");
 });
 
 app.post("/login", (request, response) => {
-  response.cookie("user_id", request.body.username);
+  let user = findUserByEmail(request.body.email);
+  if (!user || request.body.password !== user.password) {
+  response.status(403);
+  response.render("login", { error: "Not found" });
+  }
+  response.cookie("user_id", user.id);
   response.redirect("/urls");
 });
 
