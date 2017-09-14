@@ -10,25 +10,7 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser() );
 
-app.use(request, response, next)
-  response.locals = {
-    urls: urlDatabase,
-    user: findUserByEmail(request.cookies["user_id"])
-  }
-  next();
-}
-
-// app.get("/views", require("views/mymiddleware.js"));
-
-function generateRandomString() {
-  let newShortURL = "";
-  let possibleValues = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWxXxYyZz0123456789";
-
-  for (let i = 0; i < 6; i++) {
-    newShortURL += possibleValues.charAt(Math.floor(Math.random() * possibleValues.length));
-  }
-  return newShortURL;
-}
+///////DATA/////////
 
 let urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -49,10 +31,34 @@ const users = {
   }
 };
 
+/////////////////
+
+app.use((request, response, next) => {
+  response.locals = {
+    urls: urlDatabase,
+    shortURL: request.params.id,
+    longURL: urlDatabase[request.params.id],
+    user: findUserByEmail(request.cookies.users_id)
+  };
+  next();
+});
+
+/////////////////
+
+function generateRandomString() {
+  let newShortURL = "";
+  let possibleValues = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWxXxYyZz0123456789";
+
+  for (let i = 0; i < 6; i++) {
+    newShortURL += possibleValues.charAt(Math.floor(Math.random() * possibleValues.length));
+  }
+  return newShortURL;
+}
+
 app.get("/urls", (request, response) => {
   let templateVars = {
     urls: urlDatabase,
-    username: request.cookies.users[userRandomId].id
+    user: request.cookies.users_id
   };
   response.render("urls_index", templateVars);
 });
@@ -65,14 +71,14 @@ app.post("/urls", (request, response) => {
 
 app.get("/urls/new", (request, response) => {
   let templateVars = {
-    username: request.cookies.users[userRandomId].id
+    user: request.cookies.users_id
   };
   response.render("urls_new", templateVars);
 });
 
 app.get("/register", (request, response) => {
   let templateVars = {
-    username: request.cookies.users[userRandomId].id
+    user: request.cookies.users_id
   };
   response.render("register", templateVars);
 });
@@ -93,22 +99,23 @@ app.post("/register", (request, response) => {
 
   if ((!userEmail) && (!userPassword)) {
     response.status(400);
-    response.send("Please enter an email and a password")
+    response.send("Please enter an email and a password");
     return;
   }
   if (!userPassword) {
     response.status(400);
-    response.send("Please enter a password")
+    response.send("Please enter a password");
     return;
   }
   if (!userEmail) {
     response.status(400);
-    response.send("Please enter an email")
+    response.send("Please enter an email");
     return;
   }
   if (findUserByEmail(userEmail, users)) {
     response.status(400);
-    response.send("Already taken, please enter a new email")
+    //Do we want this to prove that an account exists already though?
+    response.send("Already taken, please enter a new email");
     return;
   }
 
@@ -118,7 +125,7 @@ app.post("/register", (request, response) => {
     email: userEmail,
     password: userPassword
   };
-  response.cookie("username", users[userRandomId].id);
+  response.cookie("user_id", users[userRandomId].id);
   response.redirect("/urls");
 });
 
@@ -128,7 +135,7 @@ app.post("/login", (request, response) => {
 });
 
 app.post("/logout", (request, response) => {
-  response.clearCookie("username");
+  response.clearCookie("user_id");
   response.redirect("/register");
 });
 

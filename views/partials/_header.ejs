@@ -1,4 +1,4 @@
-  <% if (username === undefined) { %>
+  <% if (user === undefined) { %>
     <form method="POST" class="" action="/login">
       <p>
         <label for="login">Username:</label>
@@ -9,7 +9,7 @@
   <% } else { %>
     <form method="POST" action="/logout">
       <p>
-        Logged in as: <%= user_id %>
+        Logged in as: <%= user %>
       </p>
       <button>Logout</button>
     </form>
