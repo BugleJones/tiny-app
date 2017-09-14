@@ -10,6 +10,14 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser() );
 
+app.use(request, response, next)
+  response.locals = {
+    urls: urlDatabase,
+    user: findUserByEmail(request.cookies["user_id"])
+  }
+  next();
+}
+
 // app.get("/views", require("views/mymiddleware.js"));
 
 function generateRandomString() {
@@ -44,7 +52,7 @@ const users = {
 app.get("/urls", (request, response) => {
   let templateVars = {
     urls: urlDatabase,
-    username: request.cookies.username
+    username: request.cookies.users[userRandomId].id
   };
   response.render("urls_index", templateVars);
 });
@@ -57,14 +65,14 @@ app.post("/urls", (request, response) => {
 
 app.get("/urls/new", (request, response) => {
   let templateVars = {
-    username: request.cookies.username
+    username: request.cookies.users[userRandomId].id
   };
   response.render("urls_new", templateVars);
 });
 
 app.get("/register", (request, response) => {
   let templateVars = {
-    username: request.cookies.username
+    username: request.cookies.users[userRandomId].id
   };
   response.render("register", templateVars);
 });
@@ -145,12 +153,13 @@ app.post("/urls/:id", (request, response) => {
 
 app.get("/urls/:id", (request, response) => {
   if (urlDatabase[request.params.id] === undefined) {
-    response.redirect(404, "/urls/new");
+    response.status(404);
+    response.send("404 Error")
   } else {
   let templateVars = {
     shortURL: request.params.id,
     longURL: urlDatabase[request.params.id],
-    username: request.cookies.username
+    username: request.cookies.users[userRandomId].id
     };
   response.render("urls_show", templateVars);
   }
@@ -161,8 +170,6 @@ app.post("/urls/:id/delete", (request, response) => {
   delete urlDatabase[currentKey];
   response.redirect("/urls");
 });
-
-console.log(users);
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
