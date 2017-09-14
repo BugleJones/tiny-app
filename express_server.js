@@ -69,15 +69,39 @@ app.get("/register", (request, response) => {
   response.render("register", templateVars);
 });
 
+function findUserByEmail(userEmail, user) {
+  for (let user in users) {
+    if (users[user].email === userEmail) {
+      return users[user];
+    } else {
+      return;
+    }
+  }
+}
+
 app.post("/register", (request, response) => {
   let userEmail = request.body.email;
   let userPassword = request.body.password;
 
+  if ((!userEmail) && (!userPassword)) {
+    response.status(400);
+    response.send("Please enter an email and a password")
+    return;
+  }
+  if (!userPassword) {
+    response.status(400);
+    response.send("Please enter a password")
+    return;
+  }
   if (!userEmail) {
     response.status(400);
-    response.send("Please enter a valid email")
-  } else if (!userPassword) {
-
+    response.send("Please enter an email")
+    return;
+  }
+  if (findUserByEmail(userEmail, users)) {
+    response.status(400);
+    response.send("Already taken, please enter a new email")
+    return;
   }
 
   let userRandomId = generateRandomString();
