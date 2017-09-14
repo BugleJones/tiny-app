@@ -129,6 +129,13 @@ app.post("/register", (request, response) => {
   response.redirect("/urls");
 });
 
+app.get("/login", (request, response) => {
+  let templateVars = {
+    user: request.cookies.users_id
+  };
+  response.render("login");
+});
+
 app.post("/login", (request, response) => {
   response.cookie("user_id", request.body.username);
   response.redirect("/urls");
