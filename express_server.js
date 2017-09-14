@@ -70,14 +70,28 @@ app.get("/register", (request, response) => {
 });
 
 app.post("/register", (request, response) => {
-  let randomUserId = generateRandomString();
+  let userEmail = request.body.email;
   let userPassword = request.body.password;
-  users[randomUserId] = request.body.id;
+
+  if (!userEmail) {
+    response.status(400);
+    response.send("Please enter a valid email")
+  } else if (!userPassword) {
+
+  }
+
+  let userRandomId = generateRandomString();
+  users[userRandomId] = {
+    id: userRandomId,
+    email: userEmail,
+    password: userPassword
+  };
+  response.cookie("username", users[userRandomId].id);
   response.redirect("/urls");
-}
+});
 
 app.post("/login", (request, response) => {
-  response.cookie("username", request.body.username);
+  response.cookie("user_id", request.body.username);
   response.redirect("/urls");
 });
 
@@ -123,6 +137,8 @@ app.post("/urls/:id/delete", (request, response) => {
   delete urlDatabase[currentKey];
   response.redirect("/urls");
 });
+
+console.log(users);
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
