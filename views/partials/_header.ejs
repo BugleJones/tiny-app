@@ -1,18 +1,7 @@
 
-
-  <% if (user === undefined) { %>
-    <form method="POST" class="" action="/login">
-      <p>
-        <label for="login">Username:</label>
-        <input id="username" type="text" name="username" placeholder="username">
-      </p>
-      <button>Sign In</button>
+    <form method="POST" action="/register">
+      <a href="/register">Register</a>
     </form>
-  <% } else { %>
-    <form method="POST" action="/logout">
-      <p>
-        Logged in as: <%= user %>
-      </p>
-      <button>Logout</button>
+    <form method="POST" action="/login">
+      <a href="/login">Login</a>
     </form>
-  <% } %>
