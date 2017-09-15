@@ -4,6 +4,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcrypt");
 const PORT = process.env.PORT || 8080; // default port 8080
 
 app.set("view engine", "ejs");
@@ -16,12 +17,12 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "dinosaur"
+    password: "$2a$10$mCFtBhM5XcaXn3dYE4xNHOSX7.GYjuw3LUtGtnPvERr1HgIewB9.6" //dinosaur
   },
   "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher"
+    password: "$2a$10$SdUyJoHt5Pgk4XU7/G5/pOa4n2WR3RWHdTfb1iY2f7cVb.PI2dWXi" //dishwasher
   }
 };
 
@@ -69,6 +70,17 @@ function getUrlsForUser(userID) {
     }
   }
   return myUrls;
+}
+
+function createUser(email, password) {
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  let id = generateRandomString();
+  users[id] = {
+    id: id,
+    email: email,
+    password: hashedPassword
+  };
+  return id;
 }
 
 //////////(URLS MAIN PAGE)//////
@@ -128,30 +140,28 @@ app.post("/register", (request, response) => {
     return;
   }
 
-  let userRandomId = generateRandomString();
-  users[userRandomId] = {
-    id: userRandomId,
-    email: userEmail,
-    password: userPassword
-  };
-  response.cookie("user_id", users[userRandomId].id);
+  const id = createUser(userEmail, userPassword);
+
+  response.cookie("user_id", id);
   response.redirect("/urls");
 });
 
 //////////(LOGIN PAGE)////////
 
 app.get("/login", (request, response) => {
-  response.render("login");
+  const secureLogin = getUrlsForUser(request.body.password);
+  response.render("login", secureLogin);
 });
 
 app.post("/login", (request, response) => {
   let user = findUserByEmail(request.body.email);
-  if (!user || request.body.password !== user.password) {
+  if (!user || !bcrypt.compareSync(request.body.password, user.password)) {
     response.status(403);
     response.render("login", { error: "Not found" });
+    return;
   }
-    response.cookie("user_id", user.id);
-    response.redirect("/urls");
+  response.cookie("user_id", user.id);
+  response.redirect("/urls");
 });
 
 //////////(LOGOUT OPTION)////////
