@@ -3,17 +3,15 @@
 <html lang="en">
 <head><title>TinyApp</title></head>
 <%- include partials/_header %>
-  <body>
+<body>
     <h1>TinyApp!</h1>
-  <% for (let shortUrl in urls) { %>
-    <p>Origin: <%= urls[shortUrl].longURL  %> TinyAppURL: <%= `http://localhost:8080/urls/${shortURL}` %></p>
+    <p>Origin: <%= longURL.longURL  %> TinyAppURL: <%= `http://localhost:8080/urls/${shortURL}` %></p>
     <form method="POST" action="/urls/<%= shortURL %>">
       <p>
-  <% } %>
         <label for="newLongUrl">New TinyAppURL:</label>
-        <input id="longURL" type="text" name="longURL" value=<%= locals[longURL] %>>
+        <input id="longURL" type="text" name="longURL" value=<%= longURL.longURL %>>
       </p>
       <button type="submit">Update</button>
     </form>
-  </body>
+</body>
 </html>

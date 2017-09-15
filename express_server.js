@@ -69,6 +69,7 @@ function findUserByEmail(userEmail) {
 function getUrlsForUser(userID) {
   const myUrls = {};
   for (let shortUrl in urlDatabase) {
+    // console.log("my conditions:", urlDatabase[shortUrl].userID, userID)
     if (urlDatabase[shortUrl].userID === userID) {
       myUrls[shortUrl] = urlDatabase[shortUrl];
     }
@@ -101,7 +102,10 @@ app.get("/urls", (request, response) => {
 
 app.post("/urls", (request, response) => {
   let shortURL = generateRandomString();
-  urlDatabase[shortURL] = request.body.longURL;
+  urlDatabase[shortURL] = {
+     longURL: request.body.longURL,
+     userID: request.session.user_id
+   };
   response.redirect(`/urls/${shortURL}`);
 });
 
@@ -191,13 +195,14 @@ app.post("/urls/:id", (request, response) => {
     response.redirect("/login");
     return;
   }
-  urlDatabase[currentURL] = newLongUrl;
+  urlDatabase[currentURL].longURL = newLongUrl;
+  console.log("our urlDatabse is", urlDatabase);
   response.redirect("/urls");
 });
 
 app.get("/urls/:id", (request, response) => {
-  let shortURL = request.params.id;
-  let longURL = urlDatabase[request.params.id];
+  const shortURL = request.params.id;
+  const longURL = urlDatabase[request.params.id];
   const urls = getUrlsForUser(request.session.user_id);
   if (!request.session.user_id) {
     response.status(401);
@@ -213,6 +218,8 @@ app.get("/urls/:id", (request, response) => {
 });
 
 app.get("/u/:shortURL", (request, response) => {
+  const shortURL = request.params.id;
+  const longURL = urlDatabase[request.params.id];
   if (urlDatabase[request.params.shortURL] === undefined) {
     response.redirect(404, "/urls/new");
   } else {
