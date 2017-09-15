@@ -3,13 +3,16 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 const PORT = process.env.PORT || 8080; // default port 8080
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser() );
+app.use(cookieSession({
+  //secret: "HugeApp",
+  keys: ["Tiniest App", "Small App", "Mini App"],
+}));
 
 ///////DATA/////////
 
@@ -35,9 +38,10 @@ let urlDatabase = {
 ////////LOCALS/////////
 
 app.use((request, response, next) => {
+  console.log("rs", request.session);
   response.locals = {
     urls: urlDatabase,
-    user: users[request.cookies.user_id]
+    user: users[request.session.user_id]
   };
   next();
 });
@@ -86,7 +90,7 @@ function createUser(email, password) {
 //////////(URLS MAIN PAGE)//////
 
 app.get("/urls", (request, response) => {
-  const urls = getUrlsForUser(request.cookies.user_id);
+  const urls = getUrlsForUser(request.session.user_id);
   response.render("urls_index", { urls });
 });
 
@@ -99,8 +103,8 @@ app.post("/urls", (request, response) => {
 ////////(URLS/NEW PAGE)//////////////
 
 app.get("/urls/new", (request, response) => {
-  const urls = getUrlsForUser(request.cookies.user_id);
-  if (!request.cookies.user_id) {
+  const urls = getUrlsForUser(request.session.user_id);
+  if (!request.session.user_id) {
     response.status(401);
     response.render("login");
   }
@@ -142,15 +146,14 @@ app.post("/register", (request, response) => {
 
   const id = createUser(userEmail, userPassword);
 
-  response.cookie("user_id", id);
+  response.session.user_id = id;
   response.redirect("/urls");
 });
 
 //////////(LOGIN PAGE)////////
 
 app.get("/login", (request, response) => {
-  const secureLogin = getUrlsForUser(request.body.password);
-  response.render("login", secureLogin);
+  response.render("login");
 });
 
 app.post("/login", (request, response) => {
@@ -160,14 +163,14 @@ app.post("/login", (request, response) => {
     response.render("login", { error: "Not found" });
     return;
   }
-  response.cookie("user_id", user.id);
+  request.session.user_id = user.id;
   response.redirect("/urls");
 });
 
 //////////(LOGOUT OPTION)////////
 
 app.post("/logout", (request, response) => {
-  response.clearCookie("user_id");
+  request.session = null;
   response.redirect("/login");
 });
 
@@ -176,10 +179,11 @@ app.post("/logout", (request, response) => {
 app.post("/urls/:id", (request, response) => {
   let newLongUrl = request.body.longURL;
   let currentURL = request.params.id;
-  const urls = getUrlsForUser(request.cookies.user_id);
-  if (!request.cookies.user_id) {
+  const urls = getUrlsForUser(request.session.user_id);
+  if (!request.session.user_id) {
     response.status(401);
     response.render("login");
+    return;
   }
   urlDatabase[currentURL] = newLongUrl;
 
@@ -189,18 +193,20 @@ app.post("/urls/:id", (request, response) => {
 app.get("/urls/:id", (request, response) => {
   let shortURL = request.params.id;
   let longURL = urlDatabase[request.params.id];
-  const urls = getUrlsForUser(request.cookies.user_id);
-  if (!request.cookies.user_id) {
+  const urls = getUrlsForUser(request.session.user_id);
+  if (!request.session.user_id) {
     response.status(401);
     response.render("login");
+    return;
   }
-  if (request.cookies.user_id !== urlDatabase[shortURL].userID) {
+  if (request.session.user_id !== urlDatabase[shortURL].userID) {
     response.status(401);
     response.render("urls_index");
   }
   if (urlDatabase[request.params.id] === undefined) {
     response.status(404);
     response.send("404 Error");
+    return;
   }
   response.render("urls_show", { shortURL, longURL, urls });
 });
@@ -211,14 +217,14 @@ app.get("/u/:shortURL", (request, response) => {
   } else {
     let longURL = urlDatabase[request.params.shortURL];
     response.redirect(longURL);
-}
+  }
 });
 
 //////(URL DELETE OPTION)////////////
 
 app.post("/urls/:id/delete", (request, response) => {
   let shortURL = request.params.id;
-  if (request.cookies.user_id !== urlDatabase[shortURL].userID) {
+  if (request.session.user_id !== urlDatabase[shortURL].userID) {
     response.status(401);
     response.render("urls_index");
   }
