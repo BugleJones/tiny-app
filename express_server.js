@@ -38,9 +38,9 @@ let urlDatabase = {
 ////////LOCALS/////////
 
 app.use((request, response, next) => {
-  console.log("rs", request.session);
   response.locals = {
     urls: urlDatabase,
+    longURL: urlDatabase[request.params.id],
     user: users[request.session.user_id]
   };
   next();
@@ -67,10 +67,10 @@ function findUserByEmail(userEmail) {
 }
 
 function getUrlsForUser(userID) {
-  const myUrls = [];
+  const myUrls = {};
   for (let shortUrl in urlDatabase) {
     if (urlDatabase[shortUrl].userID === userID) {
-      myUrls.push(shortUrl);
+      myUrls[shortUrl] = urlDatabase[shortUrl];
     }
   }
   return myUrls;
@@ -91,6 +91,11 @@ function createUser(email, password) {
 
 app.get("/urls", (request, response) => {
   const urls = getUrlsForUser(request.session.user_id);
+  if (!request.session.user_id) {
+    response.status(401);
+    response.render("login");
+    return;
+  }
   response.render("urls_index", { urls });
 });
 
@@ -107,6 +112,7 @@ app.get("/urls/new", (request, response) => {
   if (!request.session.user_id) {
     response.status(401);
     response.render("login");
+    return;
   }
   response.render("urls_new", { urls });
 });
@@ -146,7 +152,7 @@ app.post("/register", (request, response) => {
 
   const id = createUser(userEmail, userPassword);
 
-  response.session.user_id = id;
+  request.session.user_id = id;
   response.redirect("/urls");
 });
 
@@ -160,7 +166,7 @@ app.post("/login", (request, response) => {
   let user = findUserByEmail(request.body.email);
   if (!user || !bcrypt.compareSync(request.body.password, user.password)) {
     response.status(403);
-    response.render("login", { error: "Not found" });
+    response.redirect("/login", { error: "Not found" });
     return;
   }
   request.session.user_id = user.id;
@@ -182,12 +188,11 @@ app.post("/urls/:id", (request, response) => {
   const urls = getUrlsForUser(request.session.user_id);
   if (!request.session.user_id) {
     response.status(401);
-    response.render("login");
+    response.redirect("/login");
     return;
   }
   urlDatabase[currentURL] = newLongUrl;
-
-  response.redirect("/urls", { urls });
+  response.redirect("/urls");
 });
 
 app.get("/urls/:id", (request, response) => {
@@ -198,10 +203,6 @@ app.get("/urls/:id", (request, response) => {
     response.status(401);
     response.render("login");
     return;
-  }
-  if (request.session.user_id !== urlDatabase[shortURL].userID) {
-    response.status(401);
-    response.render("urls_index");
   }
   if (urlDatabase[request.params.id] === undefined) {
     response.status(404);
@@ -227,6 +228,7 @@ app.post("/urls/:id/delete", (request, response) => {
   if (request.session.user_id !== urlDatabase[shortURL].userID) {
     response.status(401);
     response.render("urls_index");
+    return;
   }
   delete urlDatabase[shortURL];
   response.redirect("/urls");

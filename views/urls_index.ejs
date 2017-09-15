@@ -7,15 +7,15 @@
 <body>
 <%- include partials/_header %>
 <h1>TinyApp!</h1>
+    <a href="/urls/new">New TinyAppURL</a>
 <h3>Your TinyURLs:</h3>
-<% for (shortUrl of urls) { %>
-    <li> Origin: <%= urls.longURL %> TinyURL: <%= `http://localhost:8080/u/${ shortUrl }` %>
-      <a href="/urls/<%= urls[shortUrl] %>">Edit</a>
-      <form method="POST" action="/urls/<%= urls[shortUrl] %>/delete">
+<% for (let shortUrl in urls) { %>
+    <li> Origin: <%= urls[shortUrl].longURL %> TinyURL: <%= `http://localhost:8080/u/${ shortUrl }` %>
+      <a href="/urls/<%= shortUrl %>">Edit</a>
+      <form method="POST" action="/urls/<%= shortUrl %>/delete">
         <button type="submit"</button>Delete
       </form>
     </li>
 <% } %>
 </body>
-
 </html>
