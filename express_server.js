@@ -46,6 +46,8 @@ app.use((request, response, next) => {
 
 //////////(USEFUL FUNCTIONS)///////////
 
+//Random string generator - used to create TinyApp short URL//
+
 function generateRandomString() {
   let newShortURL = "";
   let possibleValues = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWxXxYyZz0123456789";
@@ -56,6 +58,8 @@ function generateRandomString() {
   return newShortURL;
 }
 
+//Find User by email//
+
 function findUserByEmail(userEmail) {
   for (let user in users) {
     if (users[user].email === userEmail) {
@@ -63,6 +67,8 @@ function findUserByEmail(userEmail) {
     }
   }
 }
+
+//Find URLs specfic to user//
 
 function getUrlsForUser(userID) {
   const myUrls = {};
@@ -73,6 +79,8 @@ function getUrlsForUser(userID) {
   }
   return myUrls;
 }
+
+//Initial create user//
 
 function createUser(email, password) {
   const hashedPassword = bcrypt.hashSync(password, 10);
@@ -188,7 +196,7 @@ app.post("/logout", (request, response) => {
   response.redirect("/login");
 });
 
-//////////(URL SPECIFIC PAGE)////////
+//////////(URL SPECIFIC/ EDIT PAGES)////////
 
 app.post("/urls/:id", (request, response) => {
   let newLongUrl = request.body.longURL;
