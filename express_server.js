@@ -1,5 +1,3 @@
-"use strict";
-
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
@@ -14,7 +12,7 @@ app.use(cookieSession({
   keys: ["Tiniest App", "Small App", "Mini App"],
 }));
 
-///////DATA/////////
+///////(DATA)/////////
 
 const users = {
   "userRandomID": {
@@ -35,7 +33,7 @@ let urlDatabase = {
   "J24601": {longURL: "http://www.twitter.com", userID: "user2RandomID"}
 };
 
-////////LOCALS/////////
+////////(LOCALS)/////////
 
 app.use((request, response, next) => {
   response.locals = {
@@ -46,7 +44,7 @@ app.use((request, response, next) => {
   next();
 });
 
-//////////USEFUL FUNCTIONS///////////
+//////////(USEFUL FUNCTIONS)///////////
 
 function generateRandomString() {
   let newShortURL = "";
@@ -217,7 +215,7 @@ app.get("/urls/:id", (request, response) => {
 app.get("/u/:shortURL", (request, response) => {
   const shortURL = request.params.id;
   const longURL = urlDatabase[request.params.id];
-  if (urlDatabase[request.params.shortURL].longURL === undefined) {
+  if (urlDatabase[request.params.shortURL] === undefined) {
     response.redirect(404, "/urls/new");
   } else {
     let longURL = urlDatabase[request.params.shortURL].longURL;

@@ -6,6 +6,7 @@
 <body>
     <h1>TinyApp!</h1>
     <p>Origin: <%= longURL.longURL  %> TinyAppURL: <%= `http://localhost:8080/u/${shortURL}` %></p>
+    <a href="/urls %>">Return to your TinyAppURL List</a>
     <form method="POST" action="/urls/<%= shortURL %>">
       <p>
         <label for="newLongUrl">New TinyAppURL:</label>
