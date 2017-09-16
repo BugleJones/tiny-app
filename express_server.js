@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
-const PORT = process.env.PORT || 8080; // default port 8080
+const PORT = process.env.PORT || 8080;
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,7 +18,7 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "$2a$10$mCFtBhM5XcaXn3dYE4xNHOSX7.GYjuw3LUtGtnPvERr1HgIewB9.6" //dinosaur
+    password: "$2a$10$mCFtBhM5XcaXn3dYE4xNHOSX7.GYjuw3LUtGtnPvERr1HgIewB9.6"
   },
   "user2RandomID": {
     id: "user2RandomID",
