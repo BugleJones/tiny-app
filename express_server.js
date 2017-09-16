@@ -87,6 +87,14 @@ function createUser(email, password) {
 
 //////////(URLS MAIN PAGE)//////
 
+app.get("/", (request, response) => {
+  if (!users[request.session.user_id]) {
+  response.redirect("/login");
+  } else {
+  response.redirect("/urls");
+  }
+});
+
 app.get("/urls", (request, response) => {
   const urls = getUrlsForUser(request.session.user_id);
   if (!request.session.user_id) {
