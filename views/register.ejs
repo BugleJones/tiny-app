@@ -1,17 +1,31 @@
+<!DOCTYPE html>
+
 <html lang="en">
+<head>
+  <title>TinyApp</title>
+</head>
+<h1>TinyApp!</h1>
 <%- include partials/_header %>
+<style>
+  .error{
+    color: tomato;
+  }
+</style>
 <body>
-    <h3>Create Your TinyApp Account</h3>
-    <form action="/register" method="POST">
-      <p>
-        <label for="tinyapp-newEmail">Email</label>
-        <input type="email" name="email">
-      </p>
-      <p>
-        <label for="tinyapp-password">Password</label>
-        <input type="password" name="password">
-      </p>
-      <button type="submit">Create</button>
-    </form>
+  <h3>Create Your TinyApp Account</h3>
+  <% if (locals.error) { %>
+  <p class="error"><%= error %></p>
+  <% } %>
+  <form action="/register" method="POST">
+    <p>
+      <label for="tinyapp-newEmail">Email</label>
+      <input type="email" name="email">
+    </p>
+    <p>
+      <label for="tinyapp-password">Password</label>
+      <input type="password" name="password">
+    </p>
+    <button type="submit">Create</button>
+  </form>
 </body>
 </html>

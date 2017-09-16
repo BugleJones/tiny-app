@@ -69,7 +69,6 @@ function findUserByEmail(userEmail) {
 function getUrlsForUser(userID) {
   const myUrls = {};
   for (let shortUrl in urlDatabase) {
-    // console.log("my conditions:", urlDatabase[shortUrl].userID, userID)
     if (urlDatabase[shortUrl].userID === userID) {
       myUrls[shortUrl] = urlDatabase[shortUrl];
     }
@@ -134,23 +133,22 @@ app.post("/register", (request, response) => {
 
   if ((!userEmail) && (!userPassword)) {
     response.status(400);
-    response.send("Please enter an email and a password");
+    response.render("register", { error: "Please enter a valid email and a valid password" });
     return;
   }
   if (!userPassword) {
     response.status(400);
-    response.send("Please enter a password");
+    response.render("register", { error: "Please enter a valid password" });
     return;
   }
   if (!userEmail) {
     response.status(400);
-    response.send("Please enter an email");
+    response.render("register", { error: "Please enter a valid email" });
     return;
   }
   if (findUserByEmail(userEmail, users)) {
     response.status(400);
-    //Do we want this to prove that an account exists already though?
-    response.send("Already taken, please enter a new email");
+    response.render("register", { error: "Please enter a valid email and a valid password" });
     return;
   }
 
@@ -170,7 +168,7 @@ app.post("/login", (request, response) => {
   let user = findUserByEmail(request.body.email);
   if (!user || !bcrypt.compareSync(request.body.password, user.password)) {
     response.status(403);
-    response.redirect("/login", { error: "Not found" });
+    response.render("login", { error: "Not found" });
     return;
   }
   request.session.user_id = user.id;
@@ -196,7 +194,6 @@ app.post("/urls/:id", (request, response) => {
     return;
   }
   urlDatabase[currentURL].longURL = newLongUrl;
-  console.log("our urlDatabse is", urlDatabase);
   response.redirect("/urls");
 });
 
@@ -220,10 +217,10 @@ app.get("/urls/:id", (request, response) => {
 app.get("/u/:shortURL", (request, response) => {
   const shortURL = request.params.id;
   const longURL = urlDatabase[request.params.id];
-  if (urlDatabase[request.params.shortURL] === undefined) {
+  if (urlDatabase[request.params.shortURL].longURL === undefined) {
     response.redirect(404, "/urls/new");
   } else {
-    let longURL = urlDatabase[request.params.shortURL];
+    let longURL = urlDatabase[request.params.shortURL].longURL;
     response.redirect(longURL);
   }
 });

@@ -1,4 +1,10 @@
+<!DOCTYPE html>
+
 <html lang="en">
+<head>
+  <title>TinyApp</title>
+</head>
+<h1>TinyApp!</h1>
 <%- include partials/_header %>
 <style>
   .error{
@@ -7,19 +13,19 @@
 </style>
 <body>
   <h3>Sign Into Your TinyApp Account</h3>
-  <% if (locals.error){ %>
-  <p class='error'><%= error %></p>
+  <% if (locals.error) { %>
+  <p class="error"><%= error %></p>
   <% } %>
-    <form method="POST" class="" action="/login">
-      <p>
-        <label for="tinyapp-loginEmail">Email:</label>
-        <input type="email" name="email" placeholder="example@example.com">
-      </p>
-      <p>
-        <label for="tinyapp-password">Password:</label>
-        <input type="password" name="password">
-      </p>
-      <button type="submit">Login</button>
-    </form>
+  <form method="POST" action="/login">
+    <p>
+      <label for="tinyapp-loginEmail">Email:</label>
+      <input type="email" name="email">
+    </p>
+    <p>
+      <label for="tinyapp-password">Password:</label>
+      <input type="password" name="password">
+    </p>
+    <button type="submit">Login</button>
+  </form>
 </body>
 </html>
